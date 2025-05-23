@@ -1,6 +1,7 @@
-import { Request, Response } from 'express';
+import { CookieOptions, Request, Response } from 'express';
 import { UserService } from '../service/user.service';
 import { IUser } from '../interface/user.interface';
+import { createJWTtoken } from '../util/jwt.util';
 
 export class UserController {
   private userService: UserService;
@@ -47,9 +48,53 @@ export class UserController {
         return;
       }
       const newUser = await this.userService.createUser(userData);
+      const token = createJWTtoken(newUser);
+      const options = {
+        domain: 'localhost', // Can be changed for a production domain
+        maxAge: 1000 * 60 * 60 * 24, // 1 day in ms
+        httpOnly: true, // For security, use true if not needed in JS
+        secure: false, // Use true only for production (HTTPS)
+        sameSite: 'lax', // Change to 'None' for production with HTTPS
+        path: '/',
+      } as CookieOptions;
+      res.cookie('JWT', token, options);
       res.status(201).json(newUser);
     } catch (error) {
       console.error('Error in UserController: createUser:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  async loginUser(req: Request, res: Response): Promise<void> {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        res.status(400).json({ message: 'Email and password are required' });
+        return;
+      }
+      const user = await this.userService.loginUser(email, password);
+      const token = createJWTtoken(user);
+      const options = {
+        domain: 'localhost', // Can be changed for a production domain
+        maxAge: 1000 * 60 * 60 * 24, // 1 day in ms
+        httpOnly: true, // For security, use true if not needed in JS
+        secure: false, // Use true only for production (HTTPS)
+        sameSite: 'lax', // Change to 'None' for production with HTTPS
+      } as CookieOptions;
+      res.cookie('JWT', token, options);
+      res.status(200).json({ message: 'Login successful' });
+    } catch (error) {
+      console.error('Error in UserController: loginUser:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  async logout(_req: Request, res: Response): Promise<void> {
+    try {
+      res.clearCookie('JWT');
+      res.status(200).json({ message: 'Logout successful' });
+    } catch (error) {
+      console.error('Error in UserController: logout:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   }
