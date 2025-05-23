@@ -38,6 +38,16 @@ export class UserService {
     }
   }
 
+  async loginUser(email: string, password: string): Promise<Omit<IUser, 'password'>> {
+    try {
+      const user = await this.userRepository.loginUser(email, password);
+      return user;
+    } catch (error) {
+      console.error('Error in UserService: loginUser:', error);
+      throw error;
+    }
+  }
+
   async isUserAdmin(id: string): Promise<boolean> {
     try {
       const user = await this.userRepository.isUserAdmin(id);
