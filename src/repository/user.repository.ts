@@ -80,6 +80,34 @@ export class UserRepository {
     }
   }
 
+  async loginUser(email: string, password: string): Promise<Omit<IUser, 'password'>> {
+    const client: PoolClient = await this.pool.connect();
+    try {
+      const query = `SELECT * FROM users WHERE email = $1`;
+      const result = await client.query(query, [email]);
+      const user: IUser = result.rows[0];
+      if (!user) {
+        throw new Error('User not found');
+      }
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        throw new Error('Invalid password');
+      }
+      return {
+        id: user.id,
+        email: user.email,
+        user_role: user.user_role,
+        created_at: user.created_at,
+        updated_at: user.updated_at,
+      };
+    } catch (error) {
+      console.log('Error in UserRepository: loginUser:', error);
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
   async isUserAdmin(id: string): Promise<boolean> {
     const client: PoolClient = await this.pool.connect();
     try {
