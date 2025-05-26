@@ -11,7 +11,7 @@ exports.shorthands = undefined;
 exports.up = (pgm) => {
   // create role enum
   pgm.sql(`
-    CREATE TYPE role AS ENUM ('admin', 'user');
+    CREATE TYPE role AS ENUM ('admin', 'user', 'superadmin');
   `);
   // Create users table
   pgm.sql(`
