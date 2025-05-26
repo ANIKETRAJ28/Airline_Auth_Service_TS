@@ -2,6 +2,7 @@ import { CookieOptions, Request, Response } from 'express';
 import { UserService } from '../service/user.service';
 import { IUser } from '../interface/user.interface';
 import { createJWTtoken } from '../util/jwt.util';
+import { NODE_ENV } from '../config/env.config';
 
 export class UserController {
   private userService: UserService;
@@ -49,12 +50,16 @@ export class UserController {
       }
       const newUser = await this.userService.createUser(userData);
       const token = createJWTtoken(newUser);
+      const domain = NODE_ENV === 'production' ? '*' : 'localhost'; // Adjust domain based on environment
+      const httpOnly = NODE_ENV === 'production'; // Set httpOnly based on environment
+      const secure = NODE_ENV === 'production'; // Set secure based on environment
+      const sameSite = NODE_ENV === 'production' ? 'None' : 'lax'; // Adjust sameSite based on environment
       const options = {
-        domain: 'localhost', // Can be changed for a production domain
+        domain,
         maxAge: 1000 * 60 * 60 * 24, // 1 day in ms
-        httpOnly: true, // For security, use true if not needed in JS
-        secure: false, // Use true only for production (HTTPS)
-        sameSite: 'lax', // Change to 'None' for production with HTTPS
+        httpOnly,
+        secure,
+        sameSite,
         path: '/',
       } as CookieOptions;
       res.cookie('JWT', token, options);
@@ -74,12 +79,17 @@ export class UserController {
       }
       const user = await this.userService.loginUser(email, password);
       const token = createJWTtoken(user);
+      const domain = NODE_ENV === 'production' ? '*' : 'localhost'; // Adjust domain based on environment
+      const httpOnly = NODE_ENV === 'production'; // Set httpOnly based on environment
+      const secure = NODE_ENV === 'production'; // Set secure based on environment
+      const sameSite = NODE_ENV === 'production' ? 'None' : 'lax'; // Adjust sameSite based on environment
       const options = {
-        domain: 'localhost', // Can be changed for a production domain
+        domain,
         maxAge: 1000 * 60 * 60 * 24, // 1 day in ms
-        httpOnly: true, // For security, use true if not needed in JS
-        secure: false, // Use true only for production (HTTPS)
-        sameSite: 'lax', // Change to 'None' for production with HTTPS
+        httpOnly,
+        secure,
+        sameSite,
+        path: '/',
       } as CookieOptions;
       res.cookie('JWT', token, options);
       res.status(200).json({ message: 'Login successful' });
