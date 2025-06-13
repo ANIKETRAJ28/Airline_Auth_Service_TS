@@ -1,5 +1,6 @@
-import { IUser } from '../interface/user.interface';
+import { IUserData } from '../interface/user.interface';
 import { UserRepository } from '../repository/user.repository';
+import { IUserRole } from '../types/user.type';
 
 export class UserService {
   private userRepository: UserRepository;
@@ -8,7 +9,7 @@ export class UserService {
     this.userRepository = new UserRepository();
   }
 
-  async getUserById(id: string): Promise<Omit<IUser, 'password'>> {
+  async getUserById(id: string): Promise<IUserData> {
     try {
       const user = await this.userRepository.getUserById(id);
       return user;
@@ -18,7 +19,7 @@ export class UserService {
     }
   }
 
-  async getUserByEmail(email: string): Promise<Omit<IUser, 'password'>> {
+  async getUserByEmail(email: string): Promise<IUserData> {
     try {
       const user = await this.userRepository.getUserByEmail(email);
       return user;
@@ -28,9 +29,29 @@ export class UserService {
     }
   }
 
-  async createUser(user: Omit<IUser, 'id' | 'created_at' | 'updated_at'>): Promise<Omit<IUser, 'password'>> {
+  async registerUser(email: string): Promise<string> {
     try {
-      const newUser = await this.userRepository.createUser(user);
+      const userEmail = await this.userRepository.registerUser(email);
+      return userEmail;
+    } catch (error) {
+      console.error('Error in UserService: registerUser:', error);
+      throw error;
+    }
+  }
+
+  async verifyOtp(email: string, otp: string): Promise<IUserData> {
+    try {
+      const user = await this.userRepository.verifyOtp(email, otp);
+      return user;
+    } catch (error) {
+      console.error('Error in UserService: verifyOtp:', error);
+      throw error;
+    }
+  }
+
+  async createUser(email: string, role: IUserRole): Promise<IUserData> {
+    try {
+      const newUser = await this.userRepository.createUser(email, role);
       return newUser;
     } catch (error) {
       console.error('Error in UserService: createUser:', error);
@@ -38,12 +59,31 @@ export class UserService {
     }
   }
 
-  async loginUser(email: string, password: string): Promise<Omit<IUser, 'password'>> {
+  async loginViaPassword(email: string, password: string): Promise<IUserData> {
     try {
-      const user = await this.userRepository.loginUser(email, password);
+      const user = await this.userRepository.loginUserViaPassword(email, password);
       return user;
     } catch (error) {
-      console.error('Error in UserService: loginUser:', error);
+      console.error('Error in UserService: loginViaPassword:', error);
+      throw error;
+    }
+  }
+
+  async sendLoginOTP(email: string): Promise<void> {
+    try {
+      await this.userRepository.sendLoginOTP(email);
+    } catch (error) {
+      console.error('Error in UserService: sendLoginOTP:', error);
+      throw error;
+    }
+  }
+
+  async loginViaOTP(email: string, otp: string): Promise<IUserData> {
+    try {
+      const user = await this.userRepository.loginUserViaOTP(email, otp);
+      return user;
+    } catch (error) {
+      console.error('Error in UserService: loginViaOTP:', error);
       throw error;
     }
   }
@@ -54,6 +94,16 @@ export class UserService {
       return user;
     } catch (error) {
       console.error('Error in UserService: isUserAdmin:', error);
+      throw error;
+    }
+  }
+
+  async updateUserPassword(id: string, password: string): Promise<void> {
+    try {
+      await this.userRepository.updateUserPassword(id, password);
+      return;
+    } catch (error) {
+      console.error('Error in UserService: updateUserPassword:', error);
       throw error;
     }
   }
