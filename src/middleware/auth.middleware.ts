@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 import { NextFunction, Request, Response } from 'express';
 import { IUserData } from '../interface/user.interface';
-import { apiHandler, errorHandler } from '../logs/error.logs';
+import { apiHandler, errorHandler } from '../util/apiHandler.util';
 import { ApiError } from '../util/api.util';
 
 export function jwtMiddleware(req: Request, res: Response): IUserData | void {

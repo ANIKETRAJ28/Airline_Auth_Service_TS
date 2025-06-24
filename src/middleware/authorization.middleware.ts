@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ApiError } from '../util/api.util';
-import { errorHandler } from '../logs/error.logs';
+import { errorHandler } from '../util/apiHandler.util';
 
 export function authorizeAdminRole(req: Request, res: Response, next: NextFunction): void {
   try {

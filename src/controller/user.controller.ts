@@ -3,7 +3,7 @@ import { UserService } from '../service/user.service';
 import { createEmailToken, createJWTtoken } from '../util/jwt.util';
 import { IUserRole } from '../types/user.type';
 import { emailOptions, options } from '../config/cookieOption.util';
-import { apiHandler, errorHandler } from '../logs/error.logs';
+import { apiHandler, errorHandler } from '../util/apiHandler.util';
 import { ApiError } from '../util/api.util';
 
 export class UserController {
