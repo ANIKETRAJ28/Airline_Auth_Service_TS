@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
+import { ApiError } from '../util/api.util';
+import { errorHandler } from '../logs/error.logs';
 
 export function authorizeAdminRole(req: Request, res: Response, next: NextFunction): void {
   try {
     const userRole = req.user_role;
     if (userRole === undefined || userRole === 'user') {
-      res.status(403).json({ message: 'Forbidden: Admin access required' });
-      return;
+      throw new ApiError(401, 'Unauthorized');
     }
     next();
   } catch (error) {
-    console.error('Error in checkAdminRole middleware:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    errorHandler(error, res);
   }
 }
 
@@ -18,12 +18,10 @@ export function authorizeSuperadminRole(req: Request, res: Response, next: NextF
   try {
     const userRole = req.user_role;
     if (userRole === undefined || userRole !== 'superadmin') {
-      res.status(403).json({ message: 'Forbidden: Superadmin access required' });
-      return;
+      throw new ApiError(401, 'Unauthorized');
     }
     next();
   } catch (error) {
-    console.error('Error in checkSuperadminRole middleware:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    errorHandler(error, res);
   }
 }

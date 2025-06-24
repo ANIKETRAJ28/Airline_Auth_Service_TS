@@ -10,101 +10,42 @@ export class UserService {
   }
 
   async getUserById(id: string): Promise<IUserData> {
-    try {
-      const user = await this.userRepository.getUserById(id);
-      return user;
-    } catch (error) {
-      console.error('Error in UserService: getUserById:', error);
-      throw error;
-    }
+    return await this.userRepository.getUserById(id);
   }
 
   async getUserByEmail(email: string): Promise<IUserData> {
-    try {
-      const user = await this.userRepository.getUserByEmail(email);
-      return user;
-    } catch (error) {
-      console.error('Error in UserService: getUserByEmail:', error);
-      throw error;
-    }
+    return await this.userRepository.getUserByEmail(email);
   }
 
   async registerUser(email: string): Promise<string> {
-    try {
-      const userEmail = await this.userRepository.registerUser(email);
-      return userEmail;
-    } catch (error) {
-      console.error('Error in UserService: registerUser:', error);
-      throw error;
-    }
+    return await this.userRepository.registerUser(email);
   }
 
   async verifyOtp(email: string, otp: string): Promise<IUserData> {
-    try {
-      const user = await this.userRepository.verifyOtp(email, otp);
-      return user;
-    } catch (error) {
-      console.error('Error in UserService: verifyOtp:', error);
-      throw error;
-    }
+    return await this.userRepository.verifyOtp(email, otp);
   }
 
   async createUser(email: string, role: IUserRole): Promise<IUserData> {
-    try {
-      const newUser = await this.userRepository.createUser(email, role);
-      return newUser;
-    } catch (error) {
-      console.error('Error in UserService: createUser:', error);
-      throw error;
-    }
+    return await this.userRepository.createUser(email, role);
   }
 
   async loginViaPassword(email: string, password: string): Promise<IUserData> {
-    try {
-      const user = await this.userRepository.loginUserViaPassword(email, password);
-      return user;
-    } catch (error) {
-      console.error('Error in UserService: loginViaPassword:', error);
-      throw error;
-    }
+    return await this.userRepository.loginUserViaPassword(email, password);
   }
 
   async sendLoginOTP(email: string): Promise<void> {
-    try {
-      await this.userRepository.sendLoginOTP(email);
-    } catch (error) {
-      console.error('Error in UserService: sendLoginOTP:', error);
-      throw error;
-    }
+    await this.userRepository.sendLoginOTP(email);
   }
 
   async loginViaOTP(email: string, otp: string): Promise<IUserData> {
-    try {
-      const user = await this.userRepository.loginUserViaOTP(email, otp);
-      return user;
-    } catch (error) {
-      console.error('Error in UserService: loginViaOTP:', error);
-      throw error;
-    }
+    return await this.userRepository.loginUserViaOTP(email, otp);
   }
 
   async isUserAdmin(id: string): Promise<boolean> {
-    try {
-      const user = await this.userRepository.isUserAdmin(id);
-      return user;
-    } catch (error) {
-      console.error('Error in UserService: isUserAdmin:', error);
-      throw error;
-    }
+    return await this.userRepository.isUserAdmin(id);
   }
 
   async updateUserPassword(id: string, password: string): Promise<void> {
-    try {
-      await this.userRepository.updateUserPassword(id, password);
-      return;
-    } catch (error) {
-      console.error('Error in UserService: updateUserPassword:', error);
-      throw error;
-    }
+    await this.userRepository.updateUserPassword(id, password);
   }
 }

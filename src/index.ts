@@ -4,8 +4,14 @@ import cors from 'cors';
 import { corsOptions } from './util/cors.util';
 import { PORT } from './config/env.config';
 import { router } from './routes/index.route';
+import { errorMorgon, infoMorgan } from './logs/morgan.logs';
+import { requestMiddleware } from './middleware/request.middleware';
 
 const app = express();
+
+app.use(requestMiddleware);
+app.use(errorMorgon);
+app.use(infoMorgan);
 
 app.use(cors(corsOptions));
 app.use(express.json());
