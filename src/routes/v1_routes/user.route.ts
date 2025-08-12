@@ -8,7 +8,7 @@ const userController = new UserController();
 
 userRouter.get('/verify', verifyJWT);
 userRouter.get('/logout', authenticateJWT, userController.logout.bind(userController));
-userRouter.get('/id/:id', authenticateJWT, authorizeAdminRole, userController.getUserById.bind(userController));
+userRouter.get('/id/:id', /*authenticateJWT, authorizeAdminRole,*/ userController.getUserById.bind(userController));
 userRouter.get(
   '/email/:email',
   authenticateJWT,

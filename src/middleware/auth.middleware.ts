@@ -9,14 +9,14 @@ export function jwtMiddleware(req: Request, res: Response): IUserData | void {
   try {
     const jwtCookie = req.cookies['JWT'];
     if (!jwtCookie) {
-      throw new ApiError(501, 'unauthorized');
+      throw new ApiError(401, 'Unauthorized');
     }
     const decodedToken = jwt.decode(jwtCookie);
     if (!decodedToken || typeof decodedToken === 'string' || !decodedToken.exp) {
-      throw new ApiError(501, 'unauthorized');
+      throw new ApiError(401, 'Unauthorized');
     }
     if (decodedToken.exp * 1000 < Date.now()) {
-      throw new ApiError(501, 'unauthorized');
+      throw new ApiError(401, 'Unauthorized');
     }
     const tokenData = decodedToken as IUserData;
     return tokenData;
@@ -29,11 +29,10 @@ export function jwtMiddleware(req: Request, res: Response): IUserData | void {
 export function verifyJWT(req: Request, res: Response): void {
   try {
     const jwtData = jwtMiddleware(req, res) as IUserData;
-    apiHandler(res, 200, 'authorized', jwtData);
+    apiHandler(res, 200, 'Authorized', jwtData);
     return;
   } catch (error) {
-    console.error('Error in verifyJWT:', error);
-    res.status(501).json({ message: 'unauthorized' });
+    errorHandler(error, res);
   }
 }
 
@@ -53,11 +52,11 @@ export function authenticateEMAIL(req: Request, res: Response, next: NextFunctio
   try {
     const jwtCookie = req.cookies['EMAIL'];
     if (!jwtCookie) {
-      throw new ApiError(501, 'unauthorized');
+      throw new ApiError(401, 'Unauthorized');
     }
     const decodedToken = jwt.decode(jwtCookie);
     if (!decodedToken || typeof decodedToken !== 'string') {
-      throw new ApiError(501, 'unauthorized');
+      throw new ApiError(501, 'Unauthorized');
     }
     req.email = decodedToken;
     next();
